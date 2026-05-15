@@ -6,7 +6,7 @@
    [bling.explain :refer [explain-malli]]
    [bling.core :refer [bling]]
    [bling.hifi :refer [hifi]]
-   [clojure.string :as string]
+   [clojure.string :as str]
    [clojure.walk :as walk])
   #?(:cljs
      (:require-macros [kushi.util :refer [fallback-value]])))
@@ -46,19 +46,19 @@
 (defn kebab->shorthand [x]
   (->> (-> x
            stringify
-           (string/split #"-"))
+           (str/split #"-"))
        (map #(nth % 0 nil))
-       string/join))
+       str/join))
 
 (defn- normalize-blank-lines
   "Any blank lines with whitespace will be collapsed to an empty string"
   [s]
   (->> s
-       string/split-lines
-       (mapv #(if (and (string/blank? %) (some-> % count pos?))
+       str/split-lines
+       (mapv #(if (and (str/blank? %) (some-> % count pos?))
                 ""
                 %))
-       (string/join "\n")))
+       (str/join "\n")))
 
 (defn- ml-str-with-adjusted-indentation [s]
   (let [re #"\n( +)"
@@ -70,7 +70,7 @@
                     keys
                     (apply min))
         f  (fn [[a]] (str "\n" (subs a (inc n))))
-        s  (string/replace s re f)]
+        s  (str/replace s re f)]
     s))
 
 (defn str-ml
@@ -94,7 +94,7 @@
 (defn ml-str->vec [s]
   (-> s
       str-ml
-      (string/split #"\n")
+      (str/split #"\n")
       vec))
 
 
@@ -102,7 +102,7 @@
 ;; Check out kushi.css.hydrated/hydrated-css-var
 (defn extract-cssvar-token [s]
   (some-> s
-          (when-> #(string/starts-with? % "$"))
+          (when-> #(str/starts-with? % "$"))
           (subs 1)))
 
 
@@ -128,7 +128,7 @@
                          (when-> keyword?)
                          name
                          extract-cssvar-token)]
-    (let [[token fallback1 fallback2] (string/split token #"\|\|")]
+    (let [[token fallback1 fallback2] (str/split token #"\|\|")]
       (css-varize token
                   (some->> fallback1 s->cssvar (str ", "))
                   (some->> fallback2 s->cssvar (str ", "))))
@@ -290,13 +290,13 @@
   (map #(let [x (if (vector? %) % [%])]
           (->> x
                (map kw->cssvar2)
-               (string/join " ")))
+               (str/join " ")))
        coll))
 
 
 (defn double-quote-data-attr-selector-values [v]
   (if (re-find #"=" v)
-    (string/replace v
+    (str/replace v
                     #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
                     "[$1=\"$2\"]")
     v))
@@ -311,10 +311,10 @@
 
 
 (defn parse-numeric-string [s]
-  #?(:clj  (if (string/includes? s ".")
+  #?(:clj  (if (str/includes? s ".")
              (Double/parseDouble s)
              (Long/parseLong s))
-     :cljs (if (string/includes? s ".")
+     :cljs (if (str/includes? s ".")
              (js/parseFloat s)
              (js/parseInt s 10))))
 
@@ -345,7 +345,7 @@
                    current  []
                    result   []]
               (if (empty? chars)
-                (let [last-str (string/trim (apply str current))]
+                (let [last-str (str/trim (apply str current))]
                   (if (empty? last-str) result (conj result last-str)))
                 (let [c         (first chars)
                       new-quote (cond
@@ -371,7 +371,7 @@
                            new-depth
                            new-quote
                            []
-                           (let [trimmed (string/trim (apply str current))]
+                           (let [trimmed (str/trim (apply str current))]
                              (if (empty? trimmed) 
                                result 
                                (conj result trimmed))))
@@ -402,8 +402,8 @@
           (parse-var [s]
             (let [[_ inner-args] (re-matches css-var-re s)
                   parts          (split-top-level inner-args \,)
-                  var-name       (let [v (string/trim (first parts))]
-                                   (if (string/starts-with? v "--")
+                  var-name       (let [v (str/trim (first parts))]
+                                   (if (str/starts-with? v "--")
                                      (str "$" (subs v 2))
                                      (str "$" v)))
                   fallbacks      (map (fn [fallback-str]
@@ -413,7 +413,7 @@
                                             (symbol? parsed) (name parsed)
                                             :else (str parsed))))
                                       (rest parts))]
-              (keyword (string/join "||" (cons var-name fallbacks)))))
+              (keyword (str/join "||" (cons var-name fallbacks)))))
 
 
           ;; Helper to construct a quoted list representing a css function call,
@@ -443,9 +443,9 @@
           ;; The core recursive fn. Determines the type of the current string
           ;; fragment and dispatches to the appropriate parsing function.
           (parse-node [s]
-            (let [s           (string/trim s)
+            (let [s           (str/trim s)
                   s           (if (re-matches surrounding-parens-re s)
-                                (string/trim (subs s 1 (dec (count s))))
+                                (str/trim (subs s 1 (dec (count s))))
                                 s)
                   comma-parts (split-top-level s \,)
                   space-parts (split-top-level s \space)]
@@ -467,7 +467,7 @@
                         res))
                     parts))
 
-                (string/starts-with? s "var(")
+                (str/starts-with? s "var(")
                 (parse-var s)
 
                 (re-matches css-fn-check-re s)
@@ -484,7 +484,7 @@
               (when-> keyword?)
               name
               (when-> #(re-find #":" %))
-              (string/split #":")
+              (str/split #":")
               (->> (mapv keyword))
               vector)
       x))
@@ -522,7 +522,7 @@
             (cond (keyword? x)
                   (if (re-find #"--" (name x))
                     (apply conj acc
-                           (let [[k v] (string/split (name x) #"--")
+                           (let [[k v] (str/split (name x) #"--")
                                  k     (or (get-in shorthand/shorthand-syntax [1 k])
                                            (get-in shorthand/shorthand-syntax [2 k])
                                            (get-in shorthand/shorthand-syntax [3 k])
@@ -607,7 +607,7 @@
                                (some-> x (when-> list?) first (= 'sx))
                                (let [[_ a & args*] x
                                      class         (when (and (string? a)
-                                                              (string/starts-with? a "."))
+                                                              (str/starts-with? a "."))
                                                      a)
                                      args          (if class args* (cons a args*))
                                      classes       (atom [])
@@ -625,3 +625,385 @@
                                x))
                            coll)]
     (cons 'sx (if merge-attrs? vc (rest vc)))))
+
+
+
+;; -----------------------------------------------------------------------------
+;; css beautification  ---------------------------------------------------------
+
+
+(declare beautify-css)
+
+(defn printcss 
+  ([s]
+   (printcss s nil))
+  ([s opts]
+   (println 
+    (beautify-css s
+                  (merge
+                   (dissoc opts :theme)
+                   {:indentation 2
+                    :theme       (merge {:selectors      :magenta
+                                         :curly-brackets :blue
+                                         :round-brackets :yellow
+                                         :semi-colons    :gray
+                                         :properties     :green
+                                         :values         :neutral
+                                         :vars           :blue
+                                         :commas         :red
+                                         :colons         :red
+                                         :numbers        :neutral
+                                         :cssfn          :purple
+                                         :psuedo-colons  :green
+                                         }
+                                        (:theme opts))})))))
+
+
+
+(def ^:private ansi-colors
+  "A map of theme keys to their corresponding 256-color ANSI escape codes."
+  {:red     "\033[38;5;196m"
+   :orange  "\033[38;5;172m"
+   :yellow  "\033[38;5;178m"
+   :olive   "\033[38;5;106m"
+   :green   "\033[38;5;76m"
+   :blue    "\033[38;5;75m"
+   :purple  "\033[38;5;141m"
+   :magenta "\033[38;5;171m"
+   :gray    "\033[38;5;247m"
+   :black   "\033[38;5;16m"
+   :white   "\033[38;5;231m"
+   :reset   "\033[0m"})
+
+(defn- colorize
+  "Applies an ANSI color code to a string based on a provided theme map.
+  Returns the original string if no matching theme or color is found.
+
+  Example:
+    (colorize \"{\" :curly-brackets {:curly-brackets :blue})"
+  [text theme-key theme]
+  (if (or (empty? text) (nil? text))
+    text
+    (let [color-kw  (get theme theme-key)
+          ansi-code (get ansi-colors color-kw)]
+      (if ansi-code
+        (str ansi-code text (:reset ansi-colors))
+        text))))
+
+(defn- make-indent
+  "Generates a string of spaces for the given indentation level.
+
+  Example:
+    (make-indent 2 2) ;; Returns \"    \""
+  [level spaces]
+  (apply str (repeat (* level spaces) " ")))
+
+(def ^:private css-token-re
+  #"(?i)(?s)/\*.*?\*/|url\([^)]+\)|'(?:\\'|[^'])*'|\"(?:\\\"|[^\"])*\"|[{};()]|[^{};()'\"]+")
+
+(def ^:private selector-token-re 
+  #"::|:|,|\(|\)|\s+|[a-zA-Z0-9_.-]+|.")
+
+(def ^:private value-token-re
+  #"(?i)'(?:\\'|[^'])*'|\"(?:\\\"|[^\"])*\"|--[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\(|#[a-zA-Z0-9]+|(?:\d*\.\d+|\d+)(?:[a-zA-Z]+|%)?|\(|\)|,|\s+|[a-zA-Z_-]+|.")
+
+{
+ :a         1
+ :basdfsadf "afasdfasfds"
+ :cadfsaf   3}
+
+(defn- block-max-prop-length
+  "Looks ahead in the token stream to find the maximum property length
+  within the current CSS block, ignoring nested blocks. Used for
+  left-justifying values.
+
+  Example:
+    (block-max-prop-length '(\"width\" \":\" \" 10px\" \";\" \"}\"))"
+  [toks]
+  (loop [ts toks
+         chunk []
+         max-len 0
+         depth 0]
+    (if (empty? ts)
+      max-len
+      (let [t (first ts)]
+        (cond
+          ;; Skip over comments without affecting block depth or length
+          (str/starts-with? t "/*")
+          (recur (rest ts) chunk max-len depth)
+
+          ;; Increment depth when entering a nested scope (e.g., media queries)
+          (= t "{")
+          (recur (rest ts) [] max-len (inc depth))
+
+          ;; Decrement depth, or calculate final property length if exiting
+          (= t "}")
+          (if (zero? depth)
+            (let [full-str  (str/trim (str/join "" chunk))
+                  colon-idx (str/index-of full-str ":")]
+              (if colon-idx
+                (max max-len (count (str/trim (subs full-str 0 colon-idx))))
+                max-len))
+            (recur (rest ts) [] max-len (dec depth)))
+
+          ;; Check property length at the end of a standard declaration
+          (= t ";")
+          (if (zero? depth)
+            (let [full-str  (str/trim (str/join "" chunk))
+                  colon-idx (str/index-of full-str ":")
+                  prop-str  (if colon-idx 
+                              (subs full-str 0 colon-idx) 
+                              "")
+                  prop-len  (if colon-idx 
+                              (count (str/trim prop-str)) 
+                              0)]
+              (recur (rest ts) [] (max max-len prop-len) depth))
+            (recur (rest ts) [] max-len depth))
+
+          ;; Accumulate standard tokens into the current chunk
+          :else
+          (recur (rest ts) (conj chunk t) max-len depth))))))
+
+(defn- format-selector
+  "Tokenizes and applies syntax highlighting to a CSS selector string.
+
+  Example:
+    (format-selector \".btn:hover\" {:selectors :blue :pseudo-colons :red})"
+  [sel-str theme]
+  (let [tokens (re-seq selector-token-re sel-str)]
+    (->> tokens
+         (map (fn [t]
+                (cond
+                  ;; Colorize pseudo-classes and pseudo-elements
+                  (or (= t ":") (= t "::"))
+                  (colorize t :pseudo-colons theme)
+
+                  ;; Colorize commas separating multiple selectors
+                  (= t ",")
+                  (colorize t :commas theme)
+
+                  ;; Colorize round brackets in structural pseudo-classes
+                  (or (= t "(") (= t ")"))
+                  (colorize t :round-brackets theme)
+
+                  ;; Preserve whitespace exactly as authored
+                  (re-matches #"\s+" t)
+                  t
+
+                  ;; Treat all other text as standard selector text
+                  :else
+                  (colorize t :selectors theme))))
+         (str/join ""))))
+
+(defn- format-value-aligned
+  "Tokenizes a CSS value string and applies syntax highlighting.
+  Also manages parenthesis depth to correctly align multi-layered values
+  on newlines without breaking internal function arguments.
+
+  Example:
+    (format-value-aligned \"calc(2px + 3px)\" my-theme 12)"
+  [val-str theme align-spaces]
+  (let [tokens    (re-seq value-token-re val-str)
+        align-str (apply str (repeat align-spaces " "))]
+    (loop [toks        tokens
+           depth       0
+           skip-space? true
+           out         []]
+      (if (empty? toks)
+        (str/join "" out)
+        (let [t         (first toks)
+              next-toks (rest toks)]
+          (cond
+            ;; Handle spaces: drop them if they follow an alignment newline
+            (re-matches #"\s+" t)
+            (if skip-space?
+              (recur next-toks depth skip-space? out)
+              (recur next-toks depth false (conj out t)))
+
+            ;; Catch CSS functions (e.g., calc(, min(, linear-gradient()
+            (str/ends-with? t "(")
+            (let [fn-name (subs t 0 (dec (count t)))]
+              (recur next-toks
+                     (inc depth)
+                     false
+                     (conj out
+                           (colorize fn-name :cssfn theme)
+                           (colorize "(" :round-brackets theme))))
+
+            ;; Catch standalone opening brackets
+            (= t "(")
+            (recur next-toks
+                   (inc depth)
+                   false
+                   (conj out (colorize t :round-brackets theme)))
+
+            ;; Catch standalone closing brackets and reduce depth
+            (= t ")")
+            (recur next-toks
+                   (max 0 (dec depth))
+                   false
+                   (conj out (colorize t :round-brackets theme)))
+
+            ;; Top-level commas trigger a newline; nested commas do not
+            (= t ",")
+            (let [colored-comma (colorize t :commas theme)]
+              (if (zero? depth)
+                (recur next-toks
+                       depth
+                       true
+                       (conj out colored-comma "\n" align-str))
+                (recur next-toks
+                       depth
+                       false
+                       (conj out colored-comma))))
+
+            ;; Colorize the argument side of CSS variables
+            (str/starts-with? t "--")
+            (recur next-toks
+                   depth
+                   false
+                   (conj out (colorize t :vars theme)))
+
+            ;; Colorize numerical values including percentages and units
+            (re-matches #"(?i)^(?:\d*\.\d+|\d+)(?:[a-zA-Z]+|%)?$" t)
+            (recur next-toks
+                   depth
+                   false
+                   (conj out (colorize t :numbers theme)))
+
+            ;; Default to standard value styling for text and hex codes
+            :else
+            (recur next-toks
+                   depth
+                   false
+                   (conj out (colorize t :values theme)))))))))
+
+(defn- process-declaration
+  "Formats a single CSS property-value declaration. Applies padding
+  to the property side so that all values in the block align vertically.
+
+  Example:
+    (process-declaration [\"width\" \":\" \" 10px\"] 1 2 theme 15)"
+  [chunk indent indent-spaces theme prop-align]
+  (let [full-str  (str/trim (str/join "" chunk))
+        colon-idx (str/index-of full-str ":")]
+    (if (and colon-idx (not (empty? full-str)))
+      (let [prop               (str/trim (subs full-str 0 colon-idx))
+            val-part           (subs full-str (inc colon-idx))
+            indent-str         (make-indent indent indent-spaces)
+            effective-prop-len (max prop-align (count prop))
+            pad-len            (- effective-prop-len (count prop))
+            padding            (apply str (repeat pad-len " "))
+            align-spaces       (+ (* indent indent-spaces)
+                                  effective-prop-len
+                                  2)]
+        (str indent-str
+             (colorize prop :properties theme)
+             (colorize ":" :colons theme)
+             padding
+             " "
+             (format-value-aligned val-part theme align-spaces)))
+      
+      ;; Handle blocks missing a colon (e.g., nested selectors or media queries)
+      (when-not (empty? full-str)
+        (str (make-indent indent indent-spaces)
+             (format-selector full-str theme))))))
+
+(defn beautify-css
+  "Formats and syntax highlights a valid CSS string for Clojure/Babashka.
+  Maintains exact alignment for layered values and left-justifies properties.
+
+  Options map supports:
+    :indentation   - Number of spaces for each level (default: 2)
+    :align-values? - Left-justify values across the block (default: true)
+    :theme         - Map of syntax elements to color keywords
+                     (e.g., :properties :blue, :numbers :orange)
+
+  Example:
+    (beautify-css \".btn { color: red; }\" {:indentation 2})"
+  [css-string & [opts]]
+  (let [indent-spaces (:indentation opts 2)
+        theme         (:theme opts {})
+        align-vals?   (:align-values? opts true)
+        tokens        (re-seq css-token-re css-string)]
+    (loop [toks        tokens
+           indent      0
+           chunk       []
+           out         []
+           align-stack '(0)]
+      (if (empty? toks)
+        (str (str/trim (str/join "" out)) "\n")
+        (let [t         (first toks)
+              next-toks (rest toks)]
+          (cond
+            ;; Format floating comments and maintain indentation levels
+            (str/starts-with? t "/*")
+            (recur next-toks
+                   indent
+                   []
+                   (conj out
+                         (make-indent indent indent-spaces)
+                         (colorize t :comments theme)
+                         "\n")
+                   align-stack)
+
+            ;; Enter a new block: format the selector and scan for max prop len
+            (= t "{")
+            (let [selector   (str/trim (str/join "" chunk))
+                  next-align (if align-vals?
+                               (block-max-prop-length next-toks)
+                               0)]
+              (recur next-toks
+                     (inc indent)
+                     []
+                     (conj out
+                           (format-selector selector theme)
+                           " "
+                           (colorize "{" :curly-brackets theme)
+                           "\n")
+                     (conj align-stack next-align)))
+
+            ;; Exit a block: process remaining declarations and decrease indent
+            (= t "}")
+            (let [decl       (process-declaration chunk
+                                                  indent
+                                                  indent-spaces
+                                                  theme
+                                                  (first align-stack))
+                  new-indent (max 0 (dec indent))
+                  new-stack  (if (next align-stack)
+                               (pop align-stack)
+                               '(0))]
+              (recur next-toks
+                     new-indent
+                     []
+                     (conj out
+                           (if decl (str decl "\n") "")
+                           (make-indent new-indent indent-spaces)
+                           (colorize "}" :curly-brackets theme)
+                           "\n\n")
+                     new-stack))
+
+            ;; End of declaration: process property and value string
+            (= t ";")
+            (let [decl (process-declaration chunk
+                                            indent
+                                            indent-spaces
+                                            theme
+                                            (first align-stack))]
+              (recur next-toks
+                     indent
+                     []
+                     (conj out
+                           (if decl
+                             (str decl (colorize ";" :semi-colons theme) "\n")
+                             ""))
+                     align-stack))
+
+            ;; Accumulate text into the chunk until a structural token is hit
+            :else
+            (recur next-toks
+                   indent
+                   (conj chunk t)
+                   out
+                   align-stack)))))))
