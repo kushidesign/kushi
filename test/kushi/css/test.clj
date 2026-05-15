@@ -64,12 +64,19 @@
                          :scalar-mapkey-max-length    33
                          :single-line-coll-max-length 20})
 
+;; TODO
+;; outlaw stack shorthand such as `:1px:solid:$border-color` on value side?
 (printcss 
  (css-rule ".bang"
-           :w--50px
-           {:h :20px}
-           {:color            :red
+           {:w                :$foo
+            :h                '(calc (+ 2 3))
+            ;; :border           [[:1px :solid :$border-color]]
+            :border           :1px:solid:$border-color
+            :box-shadow       [[0 0 :10px '(max :8px (calc (* 2 :3px))) :blue]
+                               [0 0 :10px :12px :blue]]
+            :font-family      ["Arial" "Helvetica" :$fallback-font-stack]
             :background-color :blue
+            ;; [:width :height]  :30px
             ;; "&:hover"                 {:color :orange}
             ;; "@media min-width(680px)" {:color :orange}
             }))

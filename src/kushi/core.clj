@@ -383,16 +383,6 @@
   (string/split (name v) re))
 
 
-(defn- unpack-prop-value-pairs [coll]
-  (reduce
-   (fn [acc [prop v :as x]]
-     (if (vector? prop)
-       (apply conj acc x)
-       (conj acc x)))
-   []
-   coll))
-
-
 (defn- map->vec [v]
   (if (map? v) (into [] v) v))
 
@@ -419,19 +409,14 @@
            (postwalk map->vec)))
 
 
-(defn top-level-vecs->vecs
-  [conformed-map]
-  (some->> conformed-map
-           :style-vec
-           (postwalk map->vec)))
-
-
 (defn- pre-hydrated
   "This is for dealing with values that might be:
    - css vars like `$foo||10px`
    - css functions like `'(calc (+ 2px 3px))`
    - vectors (css comma separated values like `Arial, Helvetica, sans-serif`)
-   - vectors of vectors (layered box-shadows)"
+   - vectors of vectors (layered box-shadows)
+   
+   They need to be handled in the order below"
   [coll]
   (->> coll
        (postwalk hydrated/hydrated-css-var2)
@@ -443,25 +428,13 @@
 
 (defn- vectorized*
   [coll]
-  (let [pre-hydrated         (pre-hydrated coll)
-        conformed-map        (conformed-map* pre-hydrated)
-
-        top-level-maps->vecs (top-level-maps->vecs conformed-map)
-
-        ;; TODO - Drop support for top-level vecs
-        top-level-vecs->vecs (top-level-vecs->vecs conformed-map)
-        ;; TODO - how do you sort here based on original order?
-        ;; Maybe attach meta to vecs and do it by that?
-        list-of-vecs         (concat top-level-maps->vecs
-                                     top-level-vecs->vecs)
-        vectorized           (unpack-prop-value-pairs list-of-vecs)]
-
+  (let [pre-hydrated  (pre-hydrated coll)
+        conformed-map (conformed-map* pre-hydrated)
+        vectorized    (top-level-maps->vecs conformed-map)]
     (!? (keyed [coll
                 conformed-map 
                 top-level-maps->vecs  
-                list-of-vecs            
                 vectorized]))              
-
     {:conformed-map conformed-map
      :vectorized    vectorized}))
 
@@ -656,6 +629,8 @@
 
 ;; -----------------------------------------------------------------------------
 
+;; TODO - determine if you still need this and why, since we are no longer
+;; calling if from css-block*
 (defn- user-classlist
   "Expects a conformed map based on `::specs/sx-args`. This map is the
    `:conformed` entry from return val of `kushi.css.flatten/vectorized*`.
@@ -740,50 +715,6 @@
                        ])))
      user-classlist)))
 
-(defn- classlist2
-  "Returns classlist vector of classnames as strings. Includes user-supplied
-   classes, as well as auto-generated, namespace-derived classname from `css`
-   macro."
-  ([form args]
-   (classlist2 {:ns {:name "ns.unknown"}} form args))
-  ([env form args]
-   (let [fa                 (first args)
-         supplied-classname (when (and (string? fa)
-                                       (re-find specs/classname-with-dot-re fa))
-                              (subs fa 1))
-         data-attr-selector (and (string? fa)
-                                 (re-find specs/attribute-selector-re fa)
-                                 fa)
-         id-selector        (and (string? fa)
-                                 (re-find specs/id-with-hash-re fa)
-                                 fa)
-         sel                (or supplied-classname
-                                data-attr-selector
-                                id-selector
-                                (some-> env (loc-id form)))
-         args               (if supplied-classname (rest args) args)
-         m                  (-> args
-                                conformed-args
-                                :conformed-args
-                                vectorized*
-                                :conformed-map)
-         user-classlist     (assoc (user-classlist m supplied-classname)
-                                   :alternate-selectors
-                                   (merge (when id-selector 
-                                            {:id (subs id-selector 1)})
-                                          #_(when id-selector 
-                                            {:id (subs id-selector 1)})))]
-     (when (= fa "#foo")
-       (pprint (keyed [fa
-                       supplied-classname
-                       sel
-                       args
-                       m
-                       data-attr-selector
-                       m
-                       user-classlist])))
-     user-classlist)))
-
 (defn- spaces [n] (string/join (repeat n " ")))
 
 (defn- css-block-str
@@ -814,42 +745,22 @@
     ""
     coll)))
 
-(defn- nested-array-map
-  "Takes a vector representation of a nested array map and returns a nested
-   array map."
-  [coll]
-  (walk/postwalk
-   #(if (and (vector? %)
-             (every? (fn [x]
-                       (and (vector? x)
-                            (= (count x) 2)))
-                     %))
-      (apply array-map (sequence cat %))
-      %)
-   coll))
-
 (defn- grouped-css-declarations [conformed-args]
-  (let [{:keys [vectorized conformed-map]}
-        (? (vectorized* conformed-args))
-
-        grouped                 
-        (!? 'grouped-new
-            (->> vectorized 
-                 (!? 'vectorized)
-                 hydrated/hydrated-stacks
-                 (!? 'hydrated)
-                 (prewalk group-shared)
-                 (!? 'grouped)))]
-    (keyed [grouped conformed-map])))
+  (let [{:keys [vectorized]}
+        (!? (vectorized* conformed-args))
+        ]
+    (!? 'grouped-new
+        (->> vectorized 
+             (!? 'vectorized)
+             hydrated/hydrated-stacks
+             (!? 'hydrated)
+             (prewalk group-shared)
+             (!? 'grouped)))))
 
 (defn- css-block* [conformed-args]
-  (let [{:keys [grouped conformed-map]}
-        (grouped-css-declarations conformed-args)]
+  (let [grouped (grouped-css-declarations conformed-args)]
     {:css-block     (str "{\n" (css-block-str grouped) "}")
-     :nested-vector grouped
-     ;; Leave this :nested-array-map out for now
-     ;; :nested-array-map (nested-array-map grouped)
-     :classes       (-> conformed-map user-classlist :classes)}))
+     :nested-vector grouped}))
 
 (defn conformed-args 
   "Returns a vector of `[conformed-args invalid-args]`"
@@ -1465,7 +1376,6 @@
              (let [{:keys [conformed-args]} (conformed-args [x])
                    ret                      (->> conformed-args
                                                  grouped-css-declarations
-                                                 :grouped
                                                  (into {}))]
                #_(keyed [args
                          &form
