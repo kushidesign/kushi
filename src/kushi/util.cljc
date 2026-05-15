@@ -662,15 +662,15 @@
 
 (def ^:private ansi-colors
   "A map of theme keys to their corresponding 256-color ANSI escape codes."
-  {:red     "\033[38;5;196m"
+  {:red     "\033[38;5;161m"
    :orange  "\033[38;5;172m"
    :yellow  "\033[38;5;178m"
    :olive   "\033[38;5;106m"
-   :green   "\033[38;5;76m"
-   :blue    "\033[38;5;75m"
+   :green   "\033[38;5;40m"
+   :blue    "\033[38;5;39m"
    :purple  "\033[38;5;141m"
-   :magenta "\033[38;5;171m"
-   :gray    "\033[38;5;247m"
+   :magenta "\033[38;5;200m"
+   :gray    "\033[38;5;246m"
    :black   "\033[38;5;16m"
    :white   "\033[38;5;231m"
    :reset   "\033[0m"})
@@ -687,7 +687,8 @@
     (let [color-kw  (get theme theme-key)
           ansi-code (get ansi-colors color-kw)]
       (if ansi-code
-        (str ansi-code text (:reset ansi-colors))
+        (bling [color-kw text])
+        #_(str ansi-code text (:reset ansi-colors))
         text))))
 
 (defn- make-indent
