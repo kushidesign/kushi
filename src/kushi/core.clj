@@ -426,7 +426,13 @@
            (postwalk map->vec)))
 
 
-(defn- pre-hydrated [coll]
+(defn- pre-hydrated
+  "This is for dealing with values that might be:
+   - css vars like `$foo||10px`
+   - css functions like `'(calc (+ 2px 3px))`
+   - vectors (css comma separated values like `Arial, Helvetica, sans-serif`)
+   - vectors of vectors (layered box-shadows)"
+  [coll]
   (->> coll
        (postwalk hydrated/hydrated-css-var2)
        (prewalk hydrated/dequote-cssfn)
@@ -440,11 +446,6 @@
   (let [pre-hydrated         (pre-hydrated coll)
         conformed-map        (conformed-map* pre-hydrated)
 
-        ;; TODO - Drop support for tokenization
-        untokenized          (->> conformed-map 
-                                  :tokenized
-                                  (map (partial split-on #"--")))
-
         top-level-maps->vecs (top-level-maps->vecs conformed-map)
 
         ;; TODO - Drop support for top-level vecs
@@ -452,13 +453,11 @@
         ;; TODO - how do you sort here based on original order?
         ;; Maybe attach meta to vecs and do it by that?
         list-of-vecs         (concat top-level-maps->vecs
-                                     top-level-vecs->vecs
-                                     untokenized)
+                                     top-level-vecs->vecs)
         vectorized           (unpack-prop-value-pairs list-of-vecs)]
 
     (!? (keyed [coll
                 conformed-map 
-                untokenized   
                 top-level-maps->vecs  
                 list-of-vecs            
                 vectorized]))              
@@ -831,7 +830,7 @@
 
 (defn- grouped-css-declarations [conformed-args]
   (let [{:keys [vectorized conformed-map]}
-        (vectorized* conformed-args)
+        (? (vectorized* conformed-args))
 
         grouped                 
         (!? 'grouped-new

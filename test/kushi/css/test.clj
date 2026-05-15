@@ -58,16 +58,25 @@
             [kushi.css.shorthand :as shorthand]
             [malli.core :as malli]))
 
+
+(fireworks.core/config! {:scalar-max-length           33
+                         :scalar-depth-1-max-length   33
+                         :scalar-mapkey-max-length    33
+                         :single-line-coll-max-length 20})
+
 (printcss 
  (css-rule ".bang"
+           :w--50px
+           {:h :20px}
            {:color            :red
-            :background-color :blue}))
+            :background-color :blue
+            ;; "&:hover"                 {:color :orange}
+            ;; "@media min-width(680px)" {:color :orange}
+            }))
 
 
 
-#_(fireworks.core/config! {:scalar-max-length 33
-                           :scalar-depth-1-max-length 33
-                           :scalar-mapkey-max-length 33})
+
 
 ;; (? (calc (+ :$my-val (- 2 (/ 10 3)))))
 

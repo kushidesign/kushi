@@ -19,6 +19,7 @@
                         [babashka/process "0.5.22"]
                         [borkdude/edamame "1.4.27"]
                         [funcool/cuerdas "2025.05.26-411"]
+                        [com.github.danlentz/clj-figlet "0.1.4"]
 
                         ;; temp
                         [org.flatland/ordered "1.15.12"]
