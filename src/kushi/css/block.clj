@@ -1,6 +1,6 @@
 (ns kushi.css.block
   (:require ;; for testing
- ;;  [taoensso.tufte :as tufte]
+   ;;  [taoensso.tufte :as tufte]
    [bling.core :refer [bling callout point-of-interest]]
    [bling.hifi :refer [hifi]]
    [clojure.spec.alpha :as s]
@@ -12,30 +12,38 @@
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
-   [kushi.util :as util :refer [keyed 
-                                beautify-css
-                                more-than-one?
-                                spaces
-                                partition-by-pred
-                                vec-of-vecs?]]))
+   [kushi.css.util :as util :refer [keyed 
+                                    beautify-css
+                                    more-than-one?
+                                    spaces
+                                    partition-by-pred
+                                    partition-by-spec
+                                    vec-of-vecs?]]
+   [kushi.css.media :as media]))
 
 
-;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
-;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
-;; E::::::::::::::::::::ER::::::RRRRRR:::::R R::::::RRRRRR:::::R 
-;; EE::::::EEEEEEEEE::::ERR:::::R     R:::::RRR:::::R     R:::::R
-;;   E:::::E       EEEEEE  R::::R     R:::::R  R::::R     R:::::R
-;;   E:::::E               R::::R     R:::::R  R::::R     R:::::R
-;;   E::::::EEEEEEEEEE     R::::RRRRRR:::::R   R::::RRRRRR:::::R 
-;;   E:::::::::::::::E     R:::::::::::::RR    R:::::::::::::RR  
-;;   E:::::::::::::::E     R::::RRRRRR:::::R   R::::RRRRRR:::::R 
-;;   E::::::EEEEEEEEEE     R::::R     R:::::R  R::::R     R:::::R
-;;   E:::::E               R::::R     R:::::R  R::::R     R:::::R
-;;   E:::::E       EEEEEE  R::::R     R:::::R  R::::R     R:::::R
-;; EE::::::EEEEEEEE:::::ERR:::::R     R:::::RRR:::::R     R:::::R
-;; E::::::::::::::::::::ER::::::R     R:::::RR::::::R     R:::::R
-;; E::::::::::::::::::::ER::::::R     R:::::RR::::::R     R:::::R
-;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRR     RRRRRRRRRRRRRRR     RRRRRRR
+;; -----------------------------------------------------------------------------
+;; STATE
+;; -----------------------------------------------------------------------------
+
+
+
+;; EEEEEEEEEEEEEEEEEEEEEE RRRRRRRRRRRRRRRRR    RRRRRRRRRRRRRRRRR   
+;; E::::::::::::::::::::E R::::::::::::::::R   R::::::::::::::::R  
+;; E::::::::::::::::::::E R::::::RRRRRR:::::R  R::::::RRRRRR:::::R 
+;; EE::::::EEEEEEEEE::::E RR:::::R     R:::::R RR:::::R     R:::::R
+;;   E:::::E       EEEEEE   R::::R     R:::::R   R::::R     R:::::R
+;;   E:::::E                R::::R     R:::::R   R::::R     R:::::R
+;;   E::::::EEEEEEEEEE      R::::RRRRRR:::::R    R::::RRRRRR:::::R 
+;;   E:::::::::::::::E      R:::::::::::::RR     R:::::::::::::RR  
+;;   E:::::::::::::::E      R::::RRRRRR:::::R    R::::RRRRRR:::::R 
+;;   E::::::EEEEEEEEEE      R::::R     R:::::R   R::::R     R:::::R
+;;   E:::::E                R::::R     R:::::R   R::::R     R:::::R
+;;   E:::::E       EEEEEE   R::::R     R:::::R   R::::R     R:::::R
+;; EE::::::EEEEEEEE:::::E RR:::::R     R:::::R RR:::::R     R:::::R
+;; E::::::::::::::::::::E R::::::R     R:::::R R::::::R     R:::::R
+;; E::::::::::::::::::::E R::::::R     R:::::R R::::::R     R:::::R
+;; EEEEEEEEEEEEEEEEEEEEEE RRRRRRRR     RRRRRRR RRRRRRRR     RRRRRRR
 ;;
 ;; -----------------------------------------------------------------------------
 ;; Warnings and Errors
@@ -413,6 +421,13 @@
            (apply conj [])
            (postwalk map->vec)))
 
+(defn top-level-maps->vecs2
+  [vc]
+  (some->> vc
+           (map #(into [] %))
+           (apply concat)
+           (apply conj [])
+           (postwalk map->vec)))
 
 (defn- pre-hydrated
   "This is for dealing with values that might be:
@@ -430,18 +445,41 @@
        (postwalk hydrated/hydrate-vectors-containing-css-value-vectors)
        (postwalk hydrated/hydrate-layered-values)))
 
+(defn vector-of-style-maps [coll]
+  (reduce 
+   (fn [acc vc]
+     (conj acc 
+           (->> vc
+                (apply hash-map)
+                :style-map
+                pre-hydrated
+                (postwalk (fn [x] 
+                            (if (!? x (map-entry? x))
+                              (let [[prop val] x
+                                    hp         (hydrated/hydrated-prop2 prop)
+                                    val        (if (map? val)
+                                                 val
+                                                 (hydrated/hydrated-val prop val))]
+                                [hp val])
+                              x))))))
+   []
+   coll))
 
 (defn vectorized*
   [coll]
   (let [pre-hydrated  (pre-hydrated coll)
-        conformed-map (conformed-map* pre-hydrated)
-        vectorized    (top-level-maps->vecs conformed-map)]
+        conformed-map (!? (conformed-map* pre-hydrated))
+        vectorized    (!? (top-level-maps->vecs conformed-map))
+        vectorized2   (-> coll
+                          vector-of-style-maps
+                          top-level-maps->vecs2)]
     (!? (keyed [coll
                 conformed-map 
                 top-level-maps->vecs  
-                vectorized]))              
+                vectorized
+                vectorized2]))              
     {:conformed-map conformed-map
-     :vectorized    vectorized}))
+     :vectorized    vectorized2}))
 
 
 ;;         GGGGGGGGGGGGGRRRRRRRRRRRRRRRRR   PPPPPPPPPPPPPPPPP   
@@ -464,12 +502,12 @@
 ;; Grouping
 ;; -----------------------------------------------------------------------------
 
-(defn- sel-and-vec-of-vecs?2 [x]
+#_(defn- sel-and-vec-of-vecs?2 [x]
   (boolean (and (vector? x)
                 (string? (nth x 0 nil))
                 (vec-of-vecs? (nth x 1 nil)))))
 
-(defn- dupe-reduce [grouped]
+#_(defn- dupe-reduce [grouped]
   (reduce-kv (fn [acc k v]
                (->> v
                     (reduce (fn [acc [_ vc]] (apply conj acc vc)) [])
@@ -478,14 +516,14 @@
              []
              grouped))
 
-(defn- lvfha-sorted* [coll]
+#_(defn- lvfha-sorted* [coll]
   (into []
         (sort-by #(->> % 
                        first
                        (get defs/lvfha-pseudos-order-strs))
                  coll)))
 
-(defn- feature-query-sorted* [coll]
+#_(defn- feature-query-sorted* [coll]
   (let [[fq others]
         (partition-by-pred
          #(re-find #"^\@[a-z]" (some-> % (nth 0) name))
@@ -496,7 +534,7 @@
 
 
 ;; Sorts lvfha and feature queries such as @supports
-(defn- lvfha-order [coll all-nested-sels]
+#_(defn- lvfha-order [coll all-nested-sels]
   (if (some #(contains? defs/lvfha-pseudos-strs %) all-nested-sels)
     (-> coll
         lvfha-sorted*
@@ -504,7 +542,7 @@
     coll))
 
 
-(defn- group-shared*
+#_(defn- group-shared*
   "Groups things for nesting.
    Postions css properties in front of other selector bits.
    Pseudo-classes are ordered according to defs/lvfha-pseudos-order."
@@ -548,7 +586,7 @@
                            ])))
         ret))
 
-(defn- order-nested-rules
+#_(defn- order-nested-rules
   [v all-nested-sels nested-rules]
   (let [all-nested-sels (into #{} all-nested-sels)
         non-nested      (filter #(not (contains? all-nested-sels
@@ -558,7 +596,7 @@
     (lvfha-order ret* all-nested-sels)))
 
 
-(defn- group-shared
+#_(defn- group-shared
   [v]
   (let [debug? false #_(= v [:a :b])]
    (if-let [nested-rules (seq (filter sel-and-vec-of-vecs?2 v))]
@@ -611,15 +649,15 @@
 
 (defn grouped-css-declarations [conformed-args]
   (let [{:keys [vectorized]}
-        (!? (vectorized* conformed-args))
-        ]
+        (!? (vectorized* (!? conformed-args)))]
     (!? 'grouped-new
         (->> vectorized 
              (!? 'vectorized)
              hydrated/hydrated-stacks
-             (? 'hydrated)
-             (prewalk group-shared)
-             (!? 'grouped)))))
+            ;;  (!? 'hydrated)
+            ;;  (prewalk group-shared)
+            ;;  (!? 'grouped)
+             ))))
 
 (defn css-block* [conformed-args]
   (let [grouped (grouped-css-declarations conformed-args)]
@@ -636,12 +674,12 @@
 
         ret                       
         (some->> conformed-args
-                 kushi.css.block/css-block*
+                 css-block*
                  :css-block)]
     #_(keyed [args &form &env fname sel conformed-args invalid-args])
     (when (seq invalid-args)
       ;; (spec/explain ::specs/sx-args args)
-      (kushi.css.block/cssrule-args-warning
+      (cssrule-args-warning
        {:fname             fname
         :args              args
         :invalid-args      invalid-args
@@ -675,3 +713,148 @@
                                     "kushi.core/css-block"
                                     sel))]
     (beautify-css (str sel block))))
+
+
+
+;;                AAA               PPPPPPPPPPPPPPPPP   IIIIIIIIII
+;;               A:::A              P::::::::::::::::P  I::::::::I
+;;              A:::::A             P::::::PPPPPP:::::P I::::::::I
+;;             A:::::::A            PP:::::P     P:::::PII::::::II
+;;            A:::::::::A             P::::P     P:::::P  I::::I  
+;;           A:::::A:::::A            P::::P     P:::::P  I::::I  
+;;          A:::::A A:::::A           P::::PPPPPP:::::P   I::::I  
+;;         A:::::A   A:::::A          P:::::::::::::PP    I::::I  
+;;        A:::::A     A:::::A         P::::PPPPPPPPP      I::::I  
+;;       A:::::AAAAAAAAA:::::A        P::::P              I::::I  
+;;      A:::::::::::::::::::::A       P::::P              I::::I  
+;;     A:::::AAAAAAAAAAAAA:::::A      P::::P              I::::I  
+;;    A:::::A             A:::::A   PP::::::PP          II::::::II
+;;   A:::::A               A:::::A  P::::::::P          I::::::::I
+;;  A:::::A                 A:::::A P::::::::P          I::::::::I
+;; AAAAAAA                   AAAAAAAPPPPPPPPPP          IIIIIIIIII
+;; -----------------------------------------------------------------------------
+;; Public API
+;; -----------------------------------------------------------------------------
+
+
+
+(defn double-nested-rule [nm blocks]
+  (str nm
+       " {\n"
+       (str/replace (str "  " (str/join "\n" blocks)) #"\n" "\n  ")
+       "\n}"))
+
+;; TODO optimize for speed
+;; Maybe this is not needed if you can do post-write validation with lightningcss?
+(defn- bad-at-rule-name?
+  "Determines wheter user is trying to create an at-rule but supplied an at rule
+   without the leading @."
+  [sel]
+  (boolean
+   (and (string? sel)
+        (not (str/blank? sel))
+        (not (re-find #"^[\.\#\[\@\~\+\*]" sel))
+        (< 3 (count sel))
+        (re-find #"^[cfiklmnpsv]" (subs sel 0))
+        (->> (str/split sel #" ")
+             first
+             (contains? defs/at-rules)))))
+
+
+
+(defn css-rule* [sel args &form &env]
+  ;; Check if user supplied bad at-rule name, forgetting a leading "@".
+  #_(when true #_(= sel ".colorway-neutral")
+        (? :pp args #_(-> args first keys)))
+  (try (let [sel   (if (string? sel)
+                     (util/double-quote-data-attr-selector-values sel)
+                     sel)
+             fname (or (when-let [sym (nth &form 0 nil)]
+                         (when (contains? '#{sx defcss} sym)
+                           (str "kushi.core/" sym)))
+                       "kushi.core/css-rule")] 
+
+         (!? (keyed [sel fname]))
+         (if (bad-at-rule-name? sel)
+
+           (kushi.css.block/bad-at-rule-name-warning sel &form)
+
+           (if (s/valid? ::specs/at-selector sel)
+
+             ;; CSS at-rule -----------------------------------------------
+             (let [f     (fn [sel args]
+                           (str sel 
+                                " "
+                                (kushi.css.block/nested-css-block args
+                                                                  &form
+                                                                  &env
+                                                                  fname
+                                                                  sel)))]
+               (cond
+                 ;; @ keyframes ---------------------------
+                 (str/starts-with? sel "@keyframes")
+                 (if-not (s/valid? ::specs/keyframe-selector sel)
+                   (kushi.css.block/bad-at-keyframes-name-warning sel &form)
+                   (let [[vecs bad-vecs] (partition-by-spec ::specs/keyframe args)]
+                     (if (seq bad-vecs)
+                       (kushi.css.block/bad-at-rule-arg-warning bad-vecs &form)
+                       (let [blocks (for [[nested-sel m] vecs]
+                                      (f (name nested-sel) [m]))]
+                         (double-nested-rule sel blocks)))))
+
+                 ;; @ layers ------------------------------
+                 ;; TODO make work with @layer to define multiple rules
+                 ;; TODO - share with kushi.css.build.analyze
+                 (str/starts-with? sel "@layer")
+                 (if-not (s/valid? ::specs/layer-selector sel)
+                   (kushi.css.block/bad-at-layer-name-warning sel &form)
+                   (let [[_ layer & sel-bits]
+                         (str/split sel #"[\t\n\r\s]+")]
+                     (str "@layer " layer " {\n  "
+                          (str/replace (f (str/join " " sel-bits) args)
+                                          #"\n"
+                                          "\n  ")
+                          "\n}")))
+                 
+                 ;; CSS at-rule with nested css rules ------
+                 ;; TODO
+                 ;;  - created ::nested-css-rule spec
+                 ;;  - then use partition-by-spec to remove bad ones and warn
+                 (every? #(and (list? %) (= (first %) 'css-rule)) args)
+                 (let [blocks (for [[_ nested-sel & style-args] args]
+                                (f nested-sel style-args))]
+                   (double-nested-rule sel blocks))
+                 
+                 ;; @ CSS rule with no nested rules --------
+                 :else
+                 (do (f sel args))))
+
+             ;; Normal css-rule -------------------------------------------
+             (if-not (s/valid? ::specs/css-selector sel)
+               (kushi.css.block/rule-selector-warning (if (map? sel)
+                                                        (:selector sel)
+                                                        sel)
+                                                      &form)
+               (let [sel (if (map? sel) (:selector sel) sel)]
+                 
+                 (when-let [css-str (kushi.css.block/nested-css-block args
+                                                                      &form
+                                                                      &env
+                                                                      fname
+                                                                      sel)]
+                   (str sel " " css-str)))))))
+       (catch Throwable e
+         (fireworks.messaging/caught-exception
+          e
+          (merge (meta &form)
+                 {:header "[kushi.core/css-rule*]"
+                  :type   :error
+                  :form   &form
+                  :regex  #"^kushi\."})))))
+
+
+(defmacro ^:public css-rule
+  "Returns a serialized css ruleset, with selector and potentially nested css
+   block."
+  [sel & args]
+  (css-rule* sel args &form &env))

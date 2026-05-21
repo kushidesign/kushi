@@ -8,7 +8,9 @@
    :xl {:min-width :1280px}
    :xxl {:min-width :1536px}])
 
-(def media (apply array-map default-kushi-responsive))
+(defn media* [vc] (apply array-map vc))
+
+(def media (media* default-kushi-responsive))
 
 (def media-nsqkw
   (apply array-map 
@@ -29,3 +31,24 @@
         (map-indexed (fn [i [k _]]
                        [k i])
                      media)))
+
+(def breakpoints (atom media))
+
+(defn m->hydrated-mq [m]
+  (let [[k v] (first m)]
+    (str "@media(" (name k) ": " (name v) ")")))
+
+(defn hydrated-breakpoints* [m]
+  (->> media
+       (mapv (fn [[_ m]]
+               (m->hydrated-mq m)))))
+
+(def hydrated-breakpoints
+  (atom (hydrated-breakpoints* media)))
+
+
+;; This is how the user resets the breakpoints
+(defn reset-breakpoints! [vc]
+  (let [m (media* vc)]
+    (reset! breakpoints m)
+    (reset! hydrated-breakpoints (hydrated-breakpoints* m))))

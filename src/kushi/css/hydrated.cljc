@@ -5,17 +5,29 @@
    [clojure.string :as string]
    [clojure.walk :refer [prewalk postwalk]]
    [fireworks.macros :refer [keyed]]
+   [lasertag.core]
+   [bling.core :refer [bling callout point-of-interest]]
+   [bling.hifi :refer [hifi]]
    [kushi.css.defs :as defs]
    [kushi.css.media :as media]
    [kushi.css.shorthand :as shorthand]
    [kushi.cssfn]
    [kushi.css.specs :as specs]
    [kushi.util :refer [more-than-one? partition-by-pred vec-of-vecs? when-> when->>]]
-   [clojure.walk :as walk]))
+   [clojure.walk :as walk]
+   [clojure.string :as str]))
+
+#_(defn- unwrap-quoted-symbol [x]
+  (if (and (list? x)
+           (= 2 (count x))
+           (symbol? (second x)))
+    (->> x second name (str "'") symbol)
+    x))
+
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]
-  (if (string/index-of s "`") 
+  (if (string/index-of s "`")
     (-> s
         (string/replace specs/css-custom-property-re
                         "var(--$1)")
@@ -29,13 +41,13 @@
 
 (defn hydrated-css-var-fallback [s]
   (when s
-    (str ", " 
+    (str ", "
          (if (string/starts-with? s "$")
            (str "var(--" (subs s 1) ")")
            s))))
 
 (defn hydrated-css-var-with-fallbacks [s]
-  (let [[a b c] 
+  (let [[a b c]
         (take 3 (string/split s #"\|\|"))]
     (str "var(--"
          (subs a 1)
@@ -50,9 +62,9 @@
             (string/split #"\|")
             (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||"))))
 
-        ret                   
+        ret
         (->> css-comma-separated-coll
-             (map 
+             (map
               (fn [s]
                 (map #(if (string/starts-with? % "$")
                         (hydrated-css-var-with-fallbacks %)
@@ -60,7 +72,7 @@
                      (string/split s #":"))))
              (map #(string/join " " %))
              (string/join ", "))]
-        ret))
+    ret))
 
 (defn runtime-vars-hydrated [v]
   (let [runtime-vars-hydrated (str+ v)
@@ -69,12 +81,12 @@
 
 
 ;; Should this be multi-arity so we can do `(hydrated-val :1px:solid:red)` ?
-(defn hydrated-val 
+(defn hydrated-val
   "For hydrating values that are potentially shorthand or cssvars."
   [p v]
   (let [v (as-str v)
         p (as-str p)]
-    (if-let [m (and (not (re-find #"[-: ]" v)) 
+    (if-let [m (and (not (re-find #"[-: ]" v))
                     (get-in shorthand/shorthand-syntax
                             [:enums p]))]
       (get m v (runtime-vars-hydrated v))
@@ -93,25 +105,13 @@
           (runtime-vars-hydrated nv)))))
 
 
-(defn hydrated-prop 
-  [v]
-  (let [as-str (name v)
-        m      shorthand/shorthand-syntax]
-    (if (and (not (string/index-of as-str "-"))
-             (<= (count as-str) (:max-shorthand-len m)))
-      (or (get-in m [1 as-str])
-          (get-in m [2 as-str])
-          (get-in m [3 as-str])
-          as-str)
-      as-str)))
 
-
-(defn- functional-pseudo-kw [s]
+#_(defn- functional-pseudo-kw [s]
   (some-> (re-find specs/functional-pseudo-re s)
           peek
           keyword))
 
-(defn- pseudo? [s pseudos functional-pseudos]
+#_(defn- pseudo? [s pseudos functional-pseudos]
   (let [as-kw (some-> s
                       (string/split #"[\+\>\~\.\[\#\*]")
                       (nth 0 nil)
@@ -121,24 +121,24 @@
           (some #(= % as-kw) functional-pseudos)))))
 
 
-(defn pseudo-mod-transform
+#_(defn pseudo-mod-transform
   [{:keys [s t bunch?]}]
-   (str (when-not bunch? "&")
-        (when-not (string/starts-with? s ":") ":")
-        (when (= t :pseudo-element) ":")
-        s))
+  (str (when-not bunch? "&")
+       (when-not (string/starts-with? s ":") ":")
+       (when (= t :pseudo-element) ":")
+       s))
 
 
-(def mod-transforms
-  {:media-query    
+#_(def mod-transforms
+  {:media-query
    #(let [m       (-> % keyword media/media+)
           [[k v]] (when (map? m) (into [] m))]
       (str "@media(" (name k) ": " (name v) ")"))
 
-   :dark-mode      
+   :dark-mode
    (fn [_] ".dark &")
 
-   :ancestor       
+   :ancestor
    #(let [[_ sel] (re-find specs/has-ancestor-re %)]
       (str sel " &"))
 
@@ -159,13 +159,12 @@
                               (string/replace guarded #"_" " "))]
       (string/replace no-underscores #"____PRIVATE_CSSVAR____" "--_"))
 
-  ;; TODO - you can probably remove this
-  ;;  #(str (when-not (string/ends-with? % " &") "&")
-  ;;        (string/replace % #"^_" " "))
-   
+   ;; TODO - you can probably remove this
+   ;;  #(str (when-not (string/ends-with? % " &") "&")
+   ;;        (string/replace % #"^_" " "))
    })
 
-(defn- string-starts-with-pseudo-class? [s]
+#_(defn- string-starts-with-pseudo-class? [s]
   (-> s
       (string/split #"[ \:\.\+\>\~]" 2)
       first
@@ -173,7 +172,7 @@
       (pseudo? defs/pseudo-classes*
                defs/functional-pseudo-classes*)))
 
-(defn modf
+#_(defn modf
   [last-index prop? i s]
   (let [t (cond
             (and (zero? i)
@@ -183,7 +182,7 @@
             (and (or (zero? i) (= 1 i))
                  (= s "dark"))
             :dark-mode
-            
+
             (and (= i last-index) prop?)
             nil
 
@@ -210,21 +209,20 @@
 
             ;; which would have been split from something like:
             ;; " [data-ks-kushi-radio=input]:checked+[data-ks-kushi=label]>.emoji"
-            
+
             ;; If first bit is a css pseudoclass like ":checked", we need to
             ;; prepend a ":" 
             s (if (and (pos? i)
                        (string-starts-with-pseudo-class? s))
-                (do 
+                (do
                   ;; (!? :result (str "adding a leading \":\" to " s))
                   (str ":" s))
-                s)
-            ]
+                s)]
         (with-meta (symbol s) {:mod-type t}))
       s)))
 
 
-(defn nested-stack [stack v prop?]
+#_(defn nested-stack [stack v prop?]
   (let [new-v     (if prop? [[(peek stack) v]] v)
         new-stack (if prop? (pop stack) stack)]
     (reduce (fn [acc x]
@@ -233,10 +231,9 @@
             (reverse new-stack))))
 
 
-
-(defn- stack-unbunched
- ;; TODO - revisit this example / docs. 
- "Given the following example:
+#_(defn- stack-unbunched
+  ;; TODO - revisit this example / docs. 
+  "Given the following example:
   '(css
     :>p:last-child:c--blue
     :>p:last-child:after:c--orange
@@ -267,8 +264,8 @@
                     :bunch? false}
                    s)
              ret (-> arg f symbol (with-meta {:mod-transformed? true}))]
-        ;;  (when (string/starts-with? s ":checked")
-        ;;    (!? (keyed [s arg ret f])))
+         ;;  (when (string/starts-with? s ":checked")
+         ;;    (!? (keyed [s arg ret f])))
          ret)
        (name v)))
    stack*))
@@ -306,7 +303,7 @@
 ;; Contrast this with example in `stack-unbunched` comments 
 ;; There are some tradeoffs
 
-(defn- bunched-stack-reducer
+#_(defn- bunched-stack-reducer
   [acc v]
   (let [t      (:mod-type (meta v))
         prev   (peek acc)
@@ -328,7 +325,7 @@
       :else
       (conj acc v))))
 
-(defn- bunched-stack-stringify-reducer
+#_(defn- bunched-stack-stringify-reducer
   [acc v]
   (let [t   (-> v meta :mod-type)
         f   (t mod-transforms)
@@ -338,7 +335,7 @@
               s)]
     (str acc (f arg))))
 
-(defn- stack-with-bunched
+#_(defn- stack-with-bunched
   [stack*]
   (let [bunched (reduce bunched-stack-reducer [] stack*)
         ret     (mapv
@@ -354,15 +351,15 @@
 ;; -----------------------------------------------------------------------------
 
 
-(defn first-el-str-or-kw [x]
+#_(defn first-el-str-or-kw [x]
   (when (vector? x)
     (when-let [p (nth x 0 nil)]
       (when (s/valid? ::specs/s|kw p)
         p))))
 
 
-(defn stack1 [x]
-  (when-let [s (some-> x first-el-str-or-kw name)] 
+#_(defn stack1 [x]
+  (when-let [s (some-> x first-el-str-or-kw name)]
     ;; We know it is not just a css prop if there is one of the following chars:
     ;; colon, underscore, period, or space.
 
@@ -378,7 +375,7 @@
       (when (re-find #"[:_\. ]" s)
         (string/split s #":")))))
 
-(defn stack2 [x]
+#_(defn stack2 [x]
   ;; In this approach, we determine whether it is a mod/mod-stack based on the 
   ;; shape of the value.
   ;; Necessary for something that would slip through the `stack1` check, e.g.:
@@ -392,49 +389,64 @@
                (not (s/valid? ::specs/at-rule a)))
       (string/split (name a) #":"))))
 
+#_(? @media/hydrated-breakpoints)
 
-(defn- sort-mqs [coll]
-  (sort-by (fn [[k]]
-             (let [[mq] (string/split (name k) #":")]
-               (get media/index-by-media-query (keyword mq))))
-           coll))
+(defn hydrated-prop
+  [v]
+  (let [s (name v)
+        m      shorthand/shorthand-syntax]
+    (if (and (not (string/index-of s "-"))
+             (<= (count s) (:max-shorthand-len m)))
+      (or (get-in m [1 s])
+          (get-in m [2 s])
+          (get-in m [3 s])
+          s)
+      s)))
 
+(defn- unknown-breakpoint-warning [prop]
+  (callout {:type          :warning
+            :label-theme   :marquee
+            :border-weight :bold
+            :padding-top   1}
+           (bling [:p
+                   [:italic "Unknown breakpoint:"]
+                   [:br]
+                   (bling.core/with-ascii-underline
+                     (bling [:bold.red prop])
+                     {:line-index            0
+                      :text-decoration-color :red})]
+                  [:italic "Must be one of:"]
+                  [:br]
+                  (hifi (->> media/media
+                             keys
+                             (mapv #(->> %
+                                         name
+                                         (str "media/")
+                                         keyword))
+                             (into #{}))))))
 
-(defn- with-ordered-mqs [x] 
-  (and (vec-of-vecs? x)
-       (more-than-one? x)
-       (let [[mq others]
-             (partition-by-pred
-              #(let [[_ k] (re-find #"^([^\s:]+):"
-                                    (some-> % (nth 0) name))]
-                 (when k
-                   (or (get media/media+ (keyword k))
-                       (get media/media+ k))))
-              x)]
-         (when (more-than-one? mq)
-           (into [] (concat others (sort-mqs x)))))))
-
-
-;; for putting stuff like @supports last
-(defn- with-ordered-feature-queries [x] 
-  (and (vec-of-vecs? x)
-       (more-than-one? x)
-       (let [[fq others]
-             (partition-by-pred
-              #(re-find #"^\@[a-z]" (some-> % (nth 0) name))
-              x)]
-         (when (seq fq)
-           (into [] (concat others fq))))))
-
+(defn hydrated-prop2 [prop]
+  (str/replace
+   (if (s/valid? ::specs/breakpoint prop)
+     (if-let [m (get media/media
+                     (keyword
+                      (name (if (string? prop)
+                              (keyword prop)
+                              prop))))]
+       (media/m->hydrated-mq m)
+       (do (unknown-breakpoint-warning prop)
+           "@media not all"))
+     (-> prop name hydrated-prop))
+   #"_"
+   " "))
 
 ;; TODO make separate version for stack-with-bunched
-(defn hydrated-stacks1
+#_(defn hydrated-stacks1
   "If x is vec and first el is string or keyword representing a 'stack' 
    string/split the 'stack' into a sequence"
   [x]
-  (println "\n\n")
-  (? :- x)
-  (if-let [stack (or (? :no-file (stack1 x)) (? :no-file (stack2 x)))]
+  (!? {:margin-top 2} x)
+  (if-let [stack (or (!? :no-file (stack1 x)) (!? :no-file (stack2 x)))]
     (let [[_ v]         x
           prop?         (s/valid? ::specs/s|kw|num v)
           last-index    (-> stack count dec)
@@ -480,13 +492,68 @@
           (or (with-ordered-feature-queries ret)
               ret))))))
 
-(defn first-el-mod [v]
+#_(defn hydrated-stacks3
+  "If x is vec and first el is string or keyword representing a 'stack' 
+   string/split the 'stack' into a sequence"
+  [x]
+  (!? {:margin-top 2} x)
+  (if-let [stack (? (when-let [[a b] (when (and (vector? x) (= (count x) 2)) x)]
+                      (when (and (vector? b)
+                                 (s/valid? ::specs/s|kw a)
+                                 (not (s/valid? ::specs/at-rule a)))
+                        (name a))))]
+    (let [[_ v]         x
+          prop?         (s/valid? ::specs/s|kw|num v)
+          last-index    (-> stack count dec)
+          f             (partial modf last-index prop?)
+          stack*        (into [] (map-indexed f stack))
+          ;; Currently using (stack-unbunched stack*) to create `nested-stack*`.
+          ;; An alternate approach would be stack-with-bunched. 
+          nested-stack* (stack-unbunched stack*)
+          ret           (nested-stack nested-stack* v prop?)]
+
+      ;; (!?
+      ;;  (keyed [x
+      ;;          v
+      ;;          prop?
+      ;;          last-index
+      ;;          f
+      ;;          stack
+      ;;          stack*
+      ;;          nested-stack*
+      ;;          ret]))
+
+      ret)
+
+    (if-let [mod (let [mod (when (vector? x) (nth x 0 nil))]
+                   (when (-> mod meta :mod-transformed?) mod))]
+
+      [mod (nth x 1 nil)]
+
+      (if (s/valid? ::specs/semi-hydrated-style-vec x)
+
+        ;; Just the prop and value, hydrated
+        (let [hp (hydrated-prop (nth x 0 nil))]
+          [hp
+           ;; This should hydrate css-vars like :$wtf
+           ;; Also hydrate lists like '(linear-gradient "180deg" [:red] ...)
+           (hydrated-val hp (nth x 1 nil))])
+
+        ;; Return vector of hydrated-style-vecs
+        ;; order media queries here
+        ;; TODO - maybe order media queries in core/order-nested rules, then
+        ;;        A/B test for perf.
+        (let [ret (or (with-ordered-mqs x) x)]
+          (or (with-ordered-feature-queries ret)
+              ret))))))
+
+#_(defn first-el-mod [v]
   (when (vector? v)
     (when-let [mod* (nth v 0 nil)]
       (when (-> mod* meta :mod-transformed?)
         mod*))))
 
-(defn hydrated-stacks2
+#_(defn hydrated-stacks2
   [v]
   (let [mod (first-el-mod v)
         sec (when mod (nth v 1 nil))]
@@ -500,7 +567,7 @@
 
 
 (defn- hydrate-vector-values [prop v]
-  (cond 
+  (cond
     (s/valid? ::specs/vector-of-scalars v)
     [prop (string/join ", " v)]
 
@@ -511,7 +578,7 @@
     ;; [prop (string/join ", " (mapv #(if (list? %) (hydrated-css-fn %) %) v))]
     ))
 
-(defn hydrate-vectors-containing-css-value-vectors 
+(defn hydrate-vectors-containing-css-value-vectors
   "For hydrating values represented as nested vectors.
    ```clojure
    [:box-shadow  [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)]
@@ -522,15 +589,15 @@
      \"2px 4px 0 blue\"]]
    ```"
   [x]
-  (if-let [[prop v] (some-> x 
+  (if-let [[prop v] (some-> x
                             (when-> vector?)
                             (when-> #(= (count %) 2)))]
     (if (and (or (string? prop) (keyword? prop))
-            (s/valid? ::specs/vector-containing-css-value-vectors v))
-      [prop 
+             (s/valid? ::specs/vector-containing-css-value-vectors v))
+      [prop
        (mapv #(if (vector? %)
-                (let [children->strs 
-                       (mapv (fn [x] (hydrated-val prop x)) %)]
+                (let [children->strs
+                      (mapv (fn [x] (hydrated-val prop x)) %)]
                   (string/join " " children->strs))
                 %)
              v)]
@@ -539,7 +606,7 @@
 
 
 (defn hydrate-layered-values [x]
-  (if-let [[prop v] (some-> x 
+  (if-let [[prop v] (some-> x
                             (when-> vector?)
                             (when-> #(= (count %) 2)))]
     (if (and (or (string? prop) (keyword? prop))
@@ -560,8 +627,8 @@
    `(calc (+ 1 2))`"
   [v]
   (if (s/valid? ::specs/quoted-cssfn-list v)
-   (second v)
-   v))
+    (second v)
+    v))
 
 ;; (defn- linear-gradient-walk [fallback x]
 ;;   (if (css-fn? x)
@@ -599,7 +666,7 @@
   [x]
   (if (cssfn? x)
     (let [[cssfn-sym & args :as form] x]
-      (cond 
+      (cond
         ;; Arithmetic ops needs to be converted to infix
         (contains? '#{+ - * /} cssfn-sym)
         (->> args
@@ -611,9 +678,10 @@
         ;; first arg, which should be a css arithmetic fn like '(+ 1 3)
         (contains? '#{calc abs} cssfn-sym)
         (str cssfn-sym (first args))
-        
+
         ;; Take more than one expression and uses space syntax
-        (contains? '#{'rgb rgba hsl hsla hwb lab lch oklab oklch color drop-shadow} cssfn-sym)
+        (contains? '#{'rgb rgba hsl hsla hwb lab lch oklab oklch color drop-shadow}
+                   cssfn-sym)
         (str cssfn-sym "(" (string/join " " (mapv cssfn-arg args)) ")")
 
         :else
@@ -622,8 +690,8 @@
       #_(if-let [f (resolve-css-fn cssfn-sym)]
           (apply f args)
           #_(cond
-            ;; TODO - which other fn need this kind of walk?
-            ;; box-shadow? text-shadow?
+              ;; TODO - which other fn need this kind of walk?
+              ;; box-shadow? text-shadow?
               (= f #'kushi.cssfn/css-linear-gradient)
               (apply f (walk/postwalk (partial linear-gradient-walk fallback) args))
               :else
@@ -638,7 +706,7 @@
     x))
 
 (defn kw->cssvar [x]
-  (some->> x 
+  (some->> x
            (when->> keyword?)
            name
            (re-find #"^\$\S+")))
@@ -647,14 +715,57 @@
   (or (some->> x kw->cssvar hydrated-css-var)
       x))
 
+(defn- sorted-lvfha [coll]
+  (into []
+        (sort-by #(->> % 
+                       first
+                       (get defs/lvfha-pseudos-order-strs))
+                 coll)))
 
-;; Are there any 
+(defn- sorted-mqs [coll]
+  (sort-by (fn [[k]]
+             (first 
+              (keep-indexed (fn [i x] (when (= x k) i))
+                            @media/hydrated-breakpoints)))
+           coll))
 
+(defn- with-ordered-bits [x]
+  (or (and (vec-of-vecs? x)
+           (more-than-one? x)
+           (let [coll (s/conform ::specs/vectorized-style-map-with-reorderables x)
+                 {:keys [other supports lvfha media]}
+                 (reduce (fn [m [k x]]
+                           (assoc m k (-> m k (conj x))))
+                         {:other    []
+                          :supports []
+                          :lvfha    []
+                          :media    []}
+                         coll)]
+             (into []
+                   (concat other
+                           (some-> lvfha seq sorted-lvfha)
+                           (some-> media seq sorted-mqs)
+                           supports))))
+      x))
+
+;; css-rule  ?
+;; css-block ?
+
+;; css   ? (for css)
+;; style ? (for inline-styles that need a map)
+;; inline-style (for inline-styles that need a string)
+
+;; generate largish test-suite
+;; test failing cases with s/valid?
+
+
+;; use robots to do conversion to Malli
+
+;; fix printcss
 
 (defn hydrated-stacks [flattened-to-vecs]
   (->> flattened-to-vecs
-       ?
-       (prewalk hydrated-stacks1)
+       ;;  (prewalk hydrated-stacks3)
        distinct
        vec
-       (prewalk hydrated-stacks2)))
+       (postwalk with-ordered-bits)))

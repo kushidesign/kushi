@@ -13,10 +13,9 @@
             [bling.sample]
             [bling.banner :refer [banner]]
             [bling.fonts.isometric-1 :refer [isometric-1]]
+            [kushi.css.block :refer [css-rule css-rule*]]
             [kushi.core :refer [css-block-data
                                 css-block
-                                css-rule
-                                css-rule*
                                 css
                                 ?css
                                 sx
@@ -57,37 +56,54 @@
             [malli.core :as malli]))
 
 
-(fireworks.core/config! {:scalar-max-length           33
-                         :scalar-depth-1-max-length   33
-                         :scalar-mapkey-max-length    33
-                         :single-line-coll-max-length 20})
+;; (fireworks.core/config! {:scalar-max-length           33
+;;                          :scalar-depth-1-max-length   33
+;;                          :scalar-mapkey-max-length    33
+;;                          :single-line-coll-max-length 10})
 
 ;; TODO
 ;; outlaw stack shorthand such as `:1px:solid:$border-color` on value side?
-;; outlaw stack on prop side? Yes. Maybe use :media/sm for @media.
+
 (def myccc
   (css-rule ".bang"
             {
-            ;;  :w                :$foo
-            ;;  :h                '(calc (+ 2 3))
-            ;;  ;; :border           [[:1px :solid :$border-color]]
-            ;;  :border           :1px:solid:$border-color
-            ;;  :box-shadow       [[0 0 :10px '(max :8px (calc (* 2 :3px))) :blue]
-            ;;                     [0 0 :10px :12px :blue]]
-            ;;  :font-family      ["Arial" "Helvetica" :$fallback-font-stack]
-            ;;  :background-color :blue
-            ;;  "p"                 {:color :orange}
-
+             ;;  :w           :$foo
+             ;;  :h           '(calc (+ 2 3))
+             ;;  :border      [[:1px :solid :$border-color]]
+             ;;  :border           :1px:solid:$border-color
+             ;;  :box-shadow  [[0 0 :10px '(max :8px (calc (* 2 :3px))) :blue]
+             ;;                [0 0 :10px :12px :blue]]
+             ;;  :font-family ["Arial" "Helvetica" :$fallback-font-stack]
+             ;;  :background-color :blue
+             ;;  "p"          {:color :red} #_{:&li {:&.bone      {:color :orange}
+             ;;                      :&.foo:hover {:color :black}}}
+             
              ;; TODO figure out how to correct this in hydrate 
-            ;;  :p:c                 '(light-dark :orange
-            ;;                                    :pink)
-
-            :p>li:hover             {:color :gold}
-
-            ;; "@media min-width(680px)" {:color :orange}
+             :c                                                '(light-dark :orange :pink)
+             
+             ;;  :hover     {:color :gold}
+             ;;  :bgc                                              '(linear-gradient "to bottom" "#0000 50%" [:$classic-trim-color :80%])
+              :media/xl                                         {:color :orange}
+              :media/sm                                         {:color :orange
+                                                                 ;; :&:active  {:color :maroon}
+                                                                 ;; :&:hover   {:color :gold}
+                                                                 ;; :&:visited {:color :silver}
+                                                                 }
+             "@supports(color: color-mix(in oklch, red, red))" {:color :blue}
+              ;; "@media min-width(680px)" {:color :orange}
+             ;;  :ff                                               :FiraCodeRegular|Consolas|monospace
+             ;;  "&:not(.bizbang)"                                 {:color :purple}
+             :&:active                                         {:color :maroon}
+             :&:hover                                          {:color :gold}
+             :&:visited                                        {:color :silver}
+             :&:link                                        {:color :silver}
+             :&:focus                                        {:color :silver}
              }))
 
 (printcss myccc)
+
+;; (? (seq [:a :b :c]))
+
 
 #_(? (s/valid? ::specs/css-prop-stack :hover))
 
@@ -455,6 +471,9 @@
 
 /* End of whatever -------------------------*/
  ")
+
+clojure -Tnew lib :name design.kushi/kushi.css :build :bb :description "A css library" :scm/doman "github.com" :scm/user "design.kushi" :license/id "MIT" 
+
 (def sample-css2
   ":root {
   --gray-hue: 0;

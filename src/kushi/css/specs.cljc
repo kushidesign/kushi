@@ -354,14 +354,18 @@
          (contains? defs/pseudo-classes-set (keyword x))))))
 
 (s/def ::namespaced-kw
-  #(let [nm (str %)]
-     (re-find #"^:[a-z0-9-_\.]+/[a-z]+$" nm)))
+  #(re-find #"^:[a-z0-9-_\.]+/[a-z]+$" (str %)))
+
+(s/def ::breakpoint
+  #(re-find #"^:?media/[a-zA-Z0-9-_\.\?\+\*]+$" (str %)))
 
 (s/def ::css-prop-stack
   (s/and ::s|kw
-         #(not (s/valid? ::namespaced-kw %))
+         #(if (s/valid? ::breakpoint %)
+            true
+            (not (s/valid? ::namespaced-kw %)))
          #(re-find css-prop-stack-re (name %))
-        ;;  #(not (s/valid? ::bare-pseudo-class %))
+         #(not (s/valid? ::bare-pseudo-class %))
          ))
 
 (s/def ::at-rule
@@ -468,8 +472,21 @@
   #(or (s/valid? ::css-value %)
        (s/valid? ::style-map %)))
 
-(s/def ::style-map
+;; TODO this needs to be changed so that it can differentiate between:
+;; {:&p {:color :blue}}
+;; {:p :10px}
+
+#_(s/def ::style-map
   (s/map-of ::css-prop-stack ::style-map-value))
+
+(s/def ::style-map2-entry
+  (s/or :css-prop-stack              (s/tuple ::css-prop-stack ::style-map2)
+        :css-prop-standard-potential (s/tuple ::css-prop-standard-potential ::css-value)
+        :breakpoint+style-map        (s/tuple ::breakpoint ::style-map2)))
+
+(s/def ::style-map2
+  (s/and map?
+         (s/every ::style-map2-entry :kind map?)))
 
 (s/def ::style-map-for-style-attribute
   (s/map-of ::css-prop-for-style-attribute
@@ -479,6 +496,19 @@
                   list?)))
 
 
+;; ## Specs for prop reordering ------------------------------------------------
+
+(defn tuple? [%] (and (vector? %) (= 2 (count %))))
+
+(s/def ::vectorized-style-map-with-reorderables
+  (s/coll-of
+   (s/or :media    #(and (tuple? %)
+                         (-> % first (string/starts-with? "@media")))
+         :supports #(and (tuple? %)
+                         (-> % first (string/starts-with? "@supports")))
+         :lvfha    #(and (tuple? %)
+                         (->> % first (re-find #"^&:(?:link|visited|focus|hover|active)")))
+         :other    vector?)))
 
 
 ;; ## Specs for css-rule-call --------------------------------------------------
@@ -499,9 +529,9 @@
 (s/def ::valid-sx-arg
   (s/or 
    :supplied-selector ::supplied-selector
-   :style-map          ::style-map
+   :style-map         ::style-map2
    ;; TODO - what is this css-rule ... some-kind of nested thing? ... take out?
-   :css-rule-call      ::css-rule-call
+   :css-rule-call     ::css-rule-call
    ))
 
 (s/def ::sx-args

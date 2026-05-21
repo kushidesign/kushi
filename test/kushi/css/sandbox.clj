@@ -5,9 +5,9 @@
   (:require [clojure.test :refer :all]
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
+            [kushi.css.block :refer [css-rule]]
             [kushi.core :refer [css-block-data
                                     css-block
-                                    css-rule
                                     css
                                     ?css
                                     sx
